@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b1220">
+<title>Enes Phone - Telefoncu Oyunu</title>
+<style>
+:root{
+  --bg:#07111f;--panel:#101a2b;--panel2:#162337;--line:#2d415e;
+  --text:#f7fbff;--muted:#a9bbd2;--green:#26c46b;--red:#ef5350;
+  --yellow:#ffb020;--blue:#3f8cff;--purple:#8e6cff;--cyan:#25d4e8;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:linear-gradient(#06101d,#0c1726 60%,#07111f);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+body{padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
+button,input{font:inherit}
+button{touch-action:manipulation;-webkit-user-select:none;user-select:none}
+#app{max-width:1000px;margin:0 auto}
+
+.topbar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.statbtn{
+  border:1px solid var(--line);border-radius:15px;background:linear-gradient(180deg,#17253a,#101a2b);
+  color:#fff;padding:10px 8px;min-height:72px;box-shadow:0 8px 18px #0005;text-align:center
+}
+.statbtn:active{transform:scale(.98)}
+.statbtn .ico{font-size:22px;display:block}
+.statbtn small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.statbtn b{display:block;font-size:18px;margin-top:3px}
+
+.shop{
+  position:relative;height:440px;overflow:hidden;border-radius:20px;border:2px solid #3b526f;
+  background:
+  linear-gradient(#80c8ff 0 20%,#d8ecff 20% 22%,#2b3d51 22% 72%,#6b4c32 72% 100%);
+  box-shadow:0 18px 45px #0007
+}
+.window{position:absolute;left:2%;right:2%;top:4%;height:15%;background:linear-gradient(#8fd4ff,#d9f2ff);border:4px solid #243347;border-radius:12px;overflow:hidden}
+.window:after{content:"";position:absolute;left:0;right:0;bottom:0;height:35%;background:linear-gradient(100deg,#6fa76a,#8fc082)}
+.cloud{position:absolute;background:#fff9;border-radius:99px;width:70px;height:20px;top:18px}
+.cloud.c1{left:12%}.cloud.c2{right:15%;width:95px;top:30px}
+
+.logo{
+  position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:5;
+  background:#0b1220;border:2px solid #58a7ff;border-radius:12px;padding:7px 18px;
+  font-weight:900;letter-spacing:1px;box-shadow:0 0 22px #3f8cff88
+}
+.wallShelf{position:absolute;left:4%;right:4%;top:27%;height:155px;background:#243449;border-radius:12px;border:2px solid #435a76;box-shadow:inset 0 0 25px #0005}
+.shelfLine{position:absolute;left:3%;right:3%;bottom:18px;height:12px;border-radius:7px;background:linear-gradient(#b08355,#6b4629);box-shadow:0 5px 10px #0006}
+.phoneRow{position:absolute;left:6%;right:6%;top:20px;display:flex;justify-content:space-around;gap:18px}
+.demoPhone{position:relative;width:74px;height:112px;border:4px solid #0b1220;border-radius:15px;box-shadow:0 8px 15px #0008}
+.demoPhone.p1{background:linear-gradient(145deg,#14d4e8,#2563eb)}
+.demoPhone.p2{background:linear-gradient(145deg,#a855f7,#ec4899)}
+.demoPhone.p3{background:linear-gradient(145deg,#2ed573,#0fb9b1)}
+.demoPhone:before{content:"";position:absolute;left:50%;top:7px;transform:translateX(-50%);width:26px;height:5px;background:#0b1220;border-radius:6px}
+.demoPhone:after{content:"";position:absolute;left:7px;right:7px;bottom:8px;height:4px;border-radius:4px;background:#ffffff99}
+.phoneName{position:absolute;left:50%;bottom:-22px;transform:translateX(-50%);white-space:nowrap;font-size:11px;font-weight:700}
+
+.decor{position:absolute;right:3%;top:58%;width:115px;height:82px}
+.poster{position:absolute;right:8px;top:0;width:88px;height:62px;background:linear-gradient(135deg,#111827,#334155);border:2px solid #8aa0b8;border-radius:7px;transform:rotate(2deg)}
+.poster:before{content:"NEW";position:absolute;left:9px;top:8px;color:#35e0ff;font-weight:900;font-size:15px}
+.poster:after{content:"📱";position:absolute;right:8px;bottom:5px;font-size:26px}
+.plant{position:absolute;right:0;bottom:-10px;font-size:40px}
+
+.counter{position:absolute;left:0;right:0;bottom:0;height:118px;background:linear-gradient(#8a5a35,#4e2f1c);border-top:6px solid #b8834f;box-shadow:0 -8px 20px #0005}
+.counter:after{content:"";position:absolute;left:7%;right:7%;top:28px;height:14px;border-radius:7px;background:#2e1b10}
+.register{position:absolute;right:12%;bottom:82px;width:74px;height:46px;background:#26364a;border:3px solid #0b1220;border-radius:8px;z-index:4}
+.register:before{content:"";position:absolute;left:10px;top:8px;width:44px;height:14px;background:#72f0a6;border-radius:3px}
+.register:after{content:"";position:absolute;left:14px;right:14px;bottom:7px;height:8px;background:#0b1220;border-radius:3px}
+
+.clerk{position:absolute;right:26%;bottom:86px;width:105px;height:150px;z-index:3}
+.clerkHead{position:absolute;width:58px;height:58px;border-radius:50%;background:#f1bd94;left:23px;top:0;border:3px solid #111827}
+.clerkHair{position:absolute;left:20px;top:-3px;width:64px;height:28px;border-radius:35px 35px 9px 9px;background:#34251c;border:3px solid #111827}
+.clerkBody{position:absolute;left:9px;top:52px;width:88px;height:98px;border-radius:38px 38px 10px 10px;background:linear-gradient(#06b6d4,#2563eb);border:3px solid #111827}
+.clerkBody:after{content:"ENES";position:absolute;left:0;right:0;top:27px;text-align:center;font-size:14px;font-weight:900}
+
+.customer{position:absolute;left:4%;bottom:78px;width:125px;height:175px;z-index:4}
+.cHead{position:absolute;width:64px;height:64px;border-radius:50%;background:#eab48d;left:29px;top:0;border:3px solid #111827}
+.cHair{position:absolute;left:25px;top:-3px;width:73px;height:34px;border-radius:40px 40px 14px 14px;background:#4a3224;border:3px solid #111827}
+.cBody{position:absolute;left:10px;top:58px;width:104px;height:108px;border-radius:44px 44px 13px 13px;background:linear-gradient(#8b5cf6,#6d28d9);border:3px solid #111827}
+.cFace{position:absolute;left:48px;top:27px;font-size:25px;z-index:6}
+
+.bubble{
+  position:absolute;left:20%;right:3%;top:22%;z-index:8;background:#fff;color:#142033;border-radius:18px;padding:13px 15px;
+  min-height:74px;font-weight:750;box-shadow:0 10px 25px #0006;border:2px solid #dbe7f4
+}
+.bubble:before{content:"";position:absolute;left:-16px;bottom:16px;border:9px solid transparent;border-right-color:#fff}
+
+.panel{margin-top:10px;background:linear-gradient(#111d2f,#0d1726);border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:0 12px 30px #0005}
+.sectionTitle{font-size:18px;font-weight:900;margin:2px 0 8px}
+.info{color:#dbe7f4;background:#0b1422;border:1px solid #22354c;padding:9px 10px;border-radius:11px}
+.offerWrap{display:grid;grid-template-columns:1fr 130px;gap:10px;align-items:center;margin-top:9px}
+#offer{width:100%;height:36px;accent-color:var(--green)}
+#offerText{text-align:right;font-size:23px;font-weight:900}
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.btn{border:0;border-radius:12px;padding:13px 9px;color:white;font-weight:850;min-height:49px;box-shadow:0 4px 0 #0006}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 #0006}
+.btn.green{background:#179c55}.btn.yellow{background:#c98613}.btn.red{background:#c93e3b}.btn.blue{background:#2f6edc}.btn.purple{background:#7453d6}.btn.gray{background:#42536a}
+#msg{margin-top:9px;min-height:44px;background:#091321;border:1px solid #23374e;border-radius:11px;padding:10px;color:#dbe7f4}
+
+.catalog{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:9px}
+.card{background:linear-gradient(#17263a,#111b2a);border:1px solid #314760;border-radius:14px;padding:11px;position:relative;overflow:hidden}
+.card:before{content:"";position:absolute;right:-20px;top:-30px;width:80px;height:80px;border-radius:50%;background:#ffffff08}
+.card h3{margin:0 0 6px;font-size:16px}
+.card .miniPhone{float:right;width:34px;height:53px;border:3px solid #09111d;border-radius:8px;margin-left:8px}
+.card .meta{font-size:12px;color:#a9bbd2;line-height:1.45}
+.card .stockline{margin:8px 0;font-weight:900}
+.buyBtn{width:100%;border:0;border-radius:10px;background:#2f6edc;color:#fff;padding:10px;font-weight:850;min-height:44px}
+
+.bottomActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.footer{text-align:center;color:#8498af;font-size:12px;margin-top:9px}
+
+/* Modal */
+.modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:18px;z-index:9999}
+.modal.show{display:flex}
+.modalCard{width:min(92vw,480px);background:#101a2b;border:1px solid #3b526f;border-radius:18px;padding:16px;box-shadow:0 25px 70px #000a}
+.modalCard h2{margin:0 0 8px}
+.modalRows{display:grid;gap:8px}
+.modalRow{display:flex;justify-content:space-between;gap:14px;background:#0a1422;padding:10px;border-radius:10px}
+.closeBtn{width:100%;margin-top:12px;border:0;border-radius:11px;background:#3f8cff;color:white;padding:12px;font-weight:850}
+
+@media(max-width:720px){
+  .topbar{grid-template-columns:1fr 1fr}
+  .shop{height:430px}
+  .bubble{left:32%;font-size:14px}
+  .actions{grid-template-columns:1fr 1fr}
+  .catalog{grid-template-columns:1fr}
+}
+</style>
+
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Enes Phone">
+<meta name="mobile-web-app-capable" content="yes">
+
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <button class="statbtn" id="cashBtn"><span class="ico">💰</span><small>Kasa</small><b id="cash">25.000 TL</b></button>
+    <button class="statbtn" id="repBtn"><span class="ico">⭐</span><small>İtibar</small><b id="rep">50 / 100</b></button>
+    <button class="statbtn" id="dayBtn"><span class="ico">📅</span><small>Gün</small><b id="day">1</b></button>
+    <button class="statbtn" id="stockBtn"><span class="ico">📦</span><small>Stok</small><b id="stock">0</b></button>
+  </div>
+
+  <div class="shop">
+    <div class="window"><div class="cloud c1"></div><div class="cloud c2"></div></div>
+    <div class="logo">📱 ENES PHONE</div>
+
+    <div class="wallShelf">
+      <div class="phoneRow">
+        <div class="demoPhone p1"><div class="phoneName">Mini X</div></div>
+        <div class="demoPhone p2"><div class="phoneName">Nova Pro</div></div>
+        <div class="demoPhone p3"><div class="phoneName">Titan Max</div></div>
+      </div>
+      <div class="shelfLine"></div>
+    </div>
+
+    <div class="decor"><div class="poster"></div><div class="plant">🪴</div></div>
+
+    <div class="customer">
+      <div class="cBody" id="customerBody"></div>
+      <div class="cHead"></div><div class="cHair"></div><div class="cFace" id="face">🙂</div>
+    </div>
+    <div class="bubble" id="bubble">Dükkânı açmak için toptancıdan telefon al.</div>
+
+    <div class="clerk"><div class="clerkBody"></div><div class="clerkHead"></div><div class="clerkHair"></div></div>
+    <div class="register"></div>
+    <div class="counter"></div>
+  </div>
+
+  <div class="panel">
+    <div class="sectionTitle">🤝 Pazarlık Masası</div>
+    <div class="info" id="info">Müşteri bekleniyor.</div>
+    <div class="offerWrap">
+      <input id="offer" type="range" min="1000" max="30000" step="100" value="10000">
+      <div id="offerText">10.000 TL</div>
+    </div>
+    <div class="actions">
+      <button class="btn green" id="offerBtn">💬 Teklif Ver</button>
+      <button class="btn yellow" id="discountBtn">🏷️ 500 TL İndir</button>
+      <button class="btn red" id="sendBtn">🚪 Gönder</button>
+      <button class="btn blue" id="newBtn">👤 Yeni Müşteri</button>
+    </div>
+    <div id="msg">Telefon satın al, müşteriye pazarlıkla sat ve dükkânını büyüt.</div>
+
+    <div class="sectionTitle" style="margin-top:14px">🏭 Toptancı</div>
+    <div class="catalog">
+      <div class="card">
+        <div class="miniPhone" style="background:linear-gradient(145deg,#14d4e8,#2563eb)"></div>
+        <h3>Mini X</h3>
+        <div class="meta">Alış: 6.000 TL<br>Etiket: 9.000 TL</div>
+        <div class="stockline">Stok: <span id="miniStock">0</span></div>
+        <button class="buyBtn" data-model="mini">📦 1 Adet Al</button>
+      </div>
+      <div class="card">
+        <div class="miniPhone" style="background:linear-gradient(145deg,#a855f7,#ec4899)"></div>
+        <h3>Nova Pro</h3>
+        <div class="meta">Alış: 11.000 TL<br>Etiket: 16.000 TL</div>
+        <div class="stockline">Stok: <span id="novaStock">0</span></div>
+        <button class="buyBtn" data-model="nova">📦 1 Adet Al</button>
+      </div>
+      <div class="card">
+        <div class="miniPhone" style="background:linear-gradient(145deg,#2ed573,#0fb9b1)"></div>
+        <h3>Titan Max</h3>
+        <div class="meta">Alış: 17.000 TL<br>Etiket: 23.000 TL</div>
+        <div class="stockline">Stok: <span id="titanStock">0</span></div>
+        <button class="buyBtn" data-model="titan">📦 1 Adet Al</button>
+      </div>
+    </div>
+
+    <div class="bottomActions">
+      <button class="btn purple" id="endDayBtn">🌙 Günü Bitir</button>
+      <button class="btn blue" id="saveCodeBtn">💾 Kayıt Yedeği</button>
+      <button class="btn green" id="loadCodeBtn">📥 Kaydı Yükle</button>
+      <button class="btn gray" id="resetBtn">🔄 Oyunu Sıfırla</button>
+    </div>
+    <div class="info" id="saveStatus" style="margin-top:9px">💾 Otomatik kayıt hazır.</div>
+  </div>
+
+  <div class="footer">iPadOS Safari dokunmatik uyumlu • Otomatik kayıt + kayıt yedeği sistemi aktiftir.</div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modalCard">
+    <h2 id="modalTitle">Bilgi</h2>
+    <div class="modalRows" id="modalContent"></div>
+    <button class="closeBtn" id="closeModal">Kapat</button>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+var models = {
+  mini:{id:"mini",name:"Mini X",buy:6000,sell:9000},
+  nova:{id:"nova",name:"Nova Pro",buy:11000,sell:16000},
+  titan:{id:"titan",name:"Titan Max",buy:17000,sell:23000}
+};
+
+var game = {cash:25000,rep:50,day:1,stock:{mini:0,nova:0,titan:0},sales:0,revenue:0,profit:0};
+var customer = null;
+var tries = 0;
+
+function el(id){ return document.getElementById(id); }
+function money(n){ return Math.round(n).toLocaleString("tr-TR") + " TL"; }
+
+function applyGameData(data){
+  if(!data || typeof data!=="object" || !data.stock){ return false; }
+  var cash=Number(data.cash), rep=Number(data.rep), day=Number(data.day);
+  if(!isFinite(cash) || !isFinite(rep) || !isFinite(day)){ return false; }
+
+  game.cash=Math.max(0,Math.round(cash));
+  game.rep=Math.max(0,Math.min(100,Math.round(rep)));
+  game.day=Math.max(1,Math.round(day));
+  game.sales=Math.max(0,Math.round(Number(data.sales)||0));
+  game.revenue=Math.max(0,Math.round(Number(data.revenue)||0));
+  game.profit=Math.round(Number(data.profit)||0);
+
+  game.stock.mini=Math.max(0,Math.round(Number(data.stock.mini)||0));
+  game.stock.nova=Math.max(0,Math.round(Number(data.stock.nova)||0));
+  game.stock.titan=Math.max(0,Math.round(Number(data.stock.titan)||0));
+  return true;
+}
+
+function safeLoad(){
+  try{
+    var raw = window.localStorage ? localStorage.getItem("enesPhoneGameV4") : null;
+    if(!raw){
+      raw = window.localStorage ? localStorage.getItem("enesPhoneGameV3") : null;
+    }
+    if(!raw){ return false; }
+    var data = JSON.parse(raw);
+    if(applyGameData(data)){
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+function safeSave(){
+  try{
+    if(window.localStorage){
+      localStorage.setItem("enesPhoneGameV4",JSON.stringify(game));
+      var s=el("saveStatus");
+      if(s){ s.textContent="✅ Otomatik kaydedildi."; }
+      return true;
+    }
+  }catch(e){}
+  var s2=el("saveStatus");
+  if(s2){ s2.textContent="⚠️ Otomatik kayıt kullanılamıyor. Kayıt Yedeği butonunu kullan."; }
+  return false;
+}
+
+function simpleHash(str){
+  var h=2166136261;
+  for(var i=0;i<str.length;i++){
+    h^=str.charCodeAt(i);
+    h+=(h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24);
+  }
+  return (h>>>0).toString(16).toUpperCase();
+}
+
+function utf8ToB64(str){
+  try{
+    var bytes=new TextEncoder().encode(str);
+    var bin="";
+    for(var i=0;i<bytes.length;i++){ bin+=String.fromCharCode(bytes[i]); }
+    return btoa(bin);
+  }catch(e){
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+}
+
+function b64ToUtf8(str){
+  try{
+    var bin=atob(str);
+    var bytes=new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++){ bytes[i]=bin.charCodeAt(i); }
+    return new TextDecoder().decode(bytes);
+  }catch(e){
+    return decodeURIComponent(escape(atob(str)));
+  }
+}
+
+function makeSaveCode(){
+  var payload={
+    version:4,
+    savedAt:new Date().toISOString(),
+    game:game
+  };
+  var json=JSON.stringify(payload);
+  return "ENESPHONE4."+utf8ToB64(json)+"."+simpleHash(json);
+}
+
+function showSaveCode(){
+  safeSave();
+  var code=makeSaveCode();
+
+  el("modalTitle").textContent="💾 Kayıt Yedeği";
+  el("modalContent").innerHTML=
+    '<div style="color:#cfe0f3;margin-bottom:9px">Bu kodu sakla. Oyunu yeniden açtığında <b>Kaydı Yükle</b> ile tüm ilerlemeni geri getirebilirsin.</div>'+
+    '<textarea id="saveCodeArea" readonly style="width:100%;height:145px;border-radius:10px;padding:10px;background:#07111f;color:#fff;border:1px solid #3b526f;font-size:12px">'+code+'</textarea>'+
+    '<button class="closeBtn" id="copySaveCode" style="margin-top:9px">📋 Kodu Kopyala</button>';
+  el("modal").classList.add("show");
+
+  var copyBtn=el("copySaveCode");
+  copyBtn.addEventListener("click",function(){
+    var area=el("saveCodeArea");
+    area.focus();
+    area.select();
+    area.setSelectionRange(0,999999);
+
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(code).then(function(){
+        copyBtn.textContent="✅ Kopyalandı";
+      }).catch(function(){
+        try{
+          document.execCommand("copy");
+          copyBtn.textContent="✅ Kopyalandı";
+        }catch(e){
+          copyBtn.textContent="⬆️ Koda uzun basıp Kopyala";
+        }
+      });
+    }else{
+      try{
+        document.execCommand("copy");
+        copyBtn.textContent="✅ Kopyalandı";
+      }catch(e){
+        copyBtn.textContent="⬆️ Koda uzun basıp Kopyala";
+      }
+    }
+  },false);
+}
+
+function loadSaveCode(){
+  var code=window.prompt("Daha önce aldığın ENESPHONE4 kayıt kodunu buraya yapıştır:");
+  if(!code){ return; }
+  code=code.trim();
+
+  try{
+    var parts=code.split(".");
+    if(parts.length!==3 || parts[0]!=="ENESPHONE4"){
+      throw new Error("Kod biçimi yanlış");
+    }
+    var json=b64ToUtf8(parts[1]);
+    if(simpleHash(json)!==parts[2]){
+      throw new Error("Kod bozuk veya eksik");
+    }
+    var payload=JSON.parse(json);
+    if(!payload || payload.version!==4 || !applyGameData(payload.game)){
+      throw new Error("Geçersiz kayıt");
+    }
+
+    customer=null;
+    tries=0;
+    safeSave();
+    render();
+    el("face").textContent="🙂";
+    el("bubble").textContent="Kayıt başarıyla yüklendi!";
+    el("info").textContent="Eski ilerlemen geri getirildi.";
+    setMsg("✅ Kayıt yüklendi. Kasa, itibar, gün ve stok geri geldi.");
+  }catch(e){
+    window.alert("Kayıt kodu yüklenemedi. Kodun tamamını kopyaladığından emin ol.");
+  }
+}
+
+function totalStock(){ return game.stock.mini + game.stock.nova + game.stock.titan; }
+
+function render(){
+  el("cash").textContent = money(game.cash);
+  el("rep").textContent = game.rep + " / 100";
+  el("day").textContent = game.day;
+  el("stock").textContent = totalStock();
+  el("miniStock").textContent = game.stock.mini;
+  el("novaStock").textContent = game.stock.nova;
+  el("titanStock").textContent = game.stock.titan;
+}
+
+function setMsg(t){ el("msg").textContent=t; }
+function updateOffer(){ el("offerText").textContent = money(Number(el("offer").value)); }
+
+function buyStock(id){
+  var m=models[id];
+  if(!m){ return; }
+  if(game.cash < m.buy){
+    setMsg("❌ " + m.name + " için yeterli paran yok.");
+    return;
+  }
+  game.cash -= m.buy;
+  game.stock[id] += 1;
+  safeSave();
+  render();
+  setMsg("📦 " + m.name + " stoğa eklendi. " + money(m.buy) + " ödedin.");
+  if(!customer){ newCustomer(); }
+}
+
+function newCustomer(){
+  var available=[];
+  if(game.stock.mini>0){ available.push(models.mini); }
+  if(game.stock.nova>0){ available.push(models.nova); }
+  if(game.stock.titan>0){ available.push(models.titan); }
+
+  if(available.length===0){
+    customer=null;
+    el("face").textContent="🙂";
+    el("bubble").textContent="Stok yok! Önce toptancıdan telefon al.";
+    el("info").textContent="Müşteri gelmesi için stokta en az 1 telefon olmalı.";
+    setMsg("📦 Toptancı bölümündeki mavi butonlardan telefon satın al.");
+    return;
+  }
+
+  var m=available[Math.floor(Math.random()*available.length)];
+  var types=[
+    {name:"Sıkı pazarlıkçı",factor:.91,emoji:"😏",patience:3},
+    {name:"Normal müşteri",factor:.97,emoji:"🙂",patience:3},
+    {name:"Aceleci müşteri",factor:1.00,emoji:"😅",patience:2},
+    {name:"Cömert müşteri",factor:1.05,emoji:"😎",patience:3}
+  ];
+  var type=types[Math.floor(Math.random()*types.length)];
+  var budget=Math.round((m.sell*(.90+Math.random()*.15)*type.factor)/100)*100;
+  customer={model:m,type:type,budget:budget};
+  tries=0;
+
+  el("face").textContent=type.emoji;
+  el("bubble").textContent="Merhaba! " + m.name + " almak istiyorum. İyi bir fiyat yapar mısın?";
+  el("info").textContent="Müşteri tipi: " + type.name + " • İstediği telefon: " + m.name;
+  el("offer").min=m.buy+200;
+  el("offer").max=Math.round(m.sell*1.35/100)*100;
+  el("offer").value=m.sell;
+  updateOffer();
+  setMsg("🤝 Fiyatı ayarla ve Teklif Ver'e dokun.");
+}
+
+function makeOffer(){
+  if(!customer){
+    setMsg("Önce Yeni Müşteri butonuna dokun.");
+    return;
+  }
+  var price=Number(el("offer").value);
+  tries++;
+
+  if(price <= customer.budget){
+    var profit=price-customer.model.buy;
+    game.cash += price;
+    game.stock[customer.model.id] -= 1;
+    game.sales += 1;
+    game.revenue += price;
+    game.profit += profit;
+    game.rep=Math.min(100,game.rep+1);
+
+    el("face").textContent="😁";
+    el("bubble").textContent="Anlaştık! Telefonu alıyorum.";
+    setMsg("✅ Satış tamamlandı. Kâr: " + money(profit));
+    customer=null;
+    safeSave();
+    render();
+    return;
+  }
+
+  if(tries >= customer.type.patience){
+    game.rep=Math.max(0,game.rep-2);
+    el("face").textContent="😠";
+    el("bubble").textContent="Bu fiyat çok yüksek. Ben başka dükkâna gidiyorum!";
+    setMsg("❌ Müşteri kaçtı. İtibar -2.");
+    customer=null;
+    safeSave();
+    render();
+    return;
+  }
+
+  var gap=price-customer.budget;
+  el("face").textContent="🤔";
+  if(gap <= 1000){
+    el("bubble").textContent="Biraz daha indirirsen alabilirim.";
+  }else{
+    el("bubble").textContent="Bu fiyat bana yüksek geldi. İndirim yapar mısın?";
+  }
+  setMsg("💬 Pazarlık devam ediyor. Çok yükseltme!");
+}
+
+function discount(){
+  var min=Number(el("offer").min);
+  var v=Number(el("offer").value)-500;
+  if(v<min){v=min;}
+  el("offer").value=v;
+  updateOffer();
+  setMsg("🏷️ Teklif 500 TL düşürüldü.");
+}
+
+function sendCustomer(){
+  if(!customer){
+    setMsg("Şu anda gönderilecek müşteri yok.");
+    return;
+  }
+  game.rep=Math.max(0,game.rep-1);
+  customer=null;
+  el("face").textContent="😐";
+  el("bubble").textContent="Peki, başka bir dükkâna bakayım.";
+  setMsg("🚪 Müşteri gönderildi. İtibar -1.");
+  safeSave();
+  render();
+}
+
+function endDay(){
+  var rent=1200;
+  var bonus=Math.round(game.rep*6);
+  game.cash -= rent;
+  if(game.cash<0){game.cash=0;}
+  game.cash += bonus;
+  game.day += 1;
+  customer=null;
+  safeSave();
+  render();
+  el("face").textContent="🙂";
+  el("bubble").textContent="Yeni gün başladı. Yeni müşteriler geliyor!";
+  setMsg("🌙 Kira: "+money(rent)+" • İtibar bonusu: "+money(bonus)+" • Gün "+game.day+" başladı.");
+}
+
+function openModal(type){
+  var title="",rows=[];
+  if(type==="cash"){
+    title="💰 Kasa";
+    rows=[
+      ["Mevcut para",money(game.cash)],
+      ["Toplam satış geliri",money(game.revenue)],
+      ["Toplam kâr",money(game.profit)],
+      ["Toplam satış",String(game.sales)]
+    ];
+  }else if(type==="rep"){
+    title="⭐ İtibar";
+    rows=[
+      ["İtibar puanı",game.rep+" / 100"],
+      ["Durum",game.rep>=80?"Çok iyi":game.rep>=55?"İyi":game.rep>=30?"Orta":"Düşük"],
+      ["İpucu","Müşterileri memnun et, itibar kazan."]
+    ];
+  }else if(type==="day"){
+    title="📅 Gün";
+    rows=[
+      ["Bulunduğun gün",String(game.day)],
+      ["Günlük kira","1.200 TL"],
+      ["Günü bitir","Alttaki 🌙 Günü Bitir butonunu kullan."]
+    ];
+  }else{
+    title="📦 Stok";
+    rows=[
+      ["Mini X",String(game.stock.mini)],
+      ["Nova Pro",String(game.stock.nova)],
+      ["Titan Max",String(game.stock.titan)],
+      ["Toplam",String(totalStock())]
+    ];
+  }
+  el("modalTitle").textContent=title;
+  var out="";
+  for(var i=0;i<rows.length;i++){
+    out += '<div class="modalRow"><span>'+rows[i][0]+'</span><b>'+rows[i][1]+'</b></div>';
+  }
+  el("modalContent").innerHTML=out;
+  el("modal").classList.add("show");
+}
+function closeModal(){ el("modal").classList.remove("show"); }
+
+function resetGame(){
+  var ok=window.confirm("Oyunu sıfırlamak istediğine emin misin?");
+  if(!ok){return;}
+  game={cash:25000,rep:50,day:1,stock:{mini:0,nova:0,titan:0},sales:0,revenue:0,profit:0};
+  customer=null;tries=0;
+  try{localStorage.removeItem("enesPhoneGameV3");localStorage.removeItem("enesPhoneGameV4");}catch(e){}
+  render();
+  el("bubble").textContent="Dükkân sıfırlandı. Toptancıdan telefon al.";
+  el("info").textContent="Müşteri bekleniyor.";
+  setMsg("🔄 Yeni oyun başladı.");
+}
+
+function bind(){
+  el("offer").addEventListener("input",updateOffer,false);
+  el("offerBtn").addEventListener("click",makeOffer,false);
+  el("discountBtn").addEventListener("click",discount,false);
+  el("sendBtn").addEventListener("click",sendCustomer,false);
+  el("newBtn").addEventListener("click",newCustomer,false);
+  el("endDayBtn").addEventListener("click",endDay,false);
+  el("saveCodeBtn").addEventListener("click",showSaveCode,false);
+  el("loadCodeBtn").addEventListener("click",loadSaveCode,false);
+  el("resetBtn").addEventListener("click",resetGame,false);
+
+  var buyButtons=document.querySelectorAll(".buyBtn");
+  for(var i=0;i<buyButtons.length;i++){
+    buyButtons[i].addEventListener("click",function(){
+      buyStock(this.getAttribute("data-model"));
+    },false);
+  }
+
+  el("cashBtn").addEventListener("click",function(){openModal("cash");},false);
+  el("repBtn").addEventListener("click",function(){openModal("rep");},false);
+  el("dayBtn").addEventListener("click",function(){openModal("day");},false);
+  el("stockBtn").addEventListener("click",function(){openModal("stock");},false);
+  el("closeModal").addEventListener("click",closeModal,false);
+  el("modal").addEventListener("click",function(e){ if(e.target===el("modal")){closeModal();} },false);
+
+  window.addEventListener("pagehide",safeSave,false);
+  window.addEventListener("beforeunload",safeSave,false);
+  document.addEventListener("visibilitychange",function(){
+    if(document.hidden){ safeSave(); }
+  },false);
+}
+
+var loaded=safeLoad();
+render();
+bind();
+updateOffer();
+if(loaded){
+  el("saveStatus").textContent="✅ Son otomatik kayıt yüklendi.";
+}else{
+  el("saveStatus").textContent="💾 Yeni oyun. Değişiklikler otomatik kaydedilir.";
+}
+})();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./service-worker.js").catch(function(){});
+  });
+}
+</script>
+
+</body>
+</html>
